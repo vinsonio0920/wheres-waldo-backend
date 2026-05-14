@@ -1,0 +1,27 @@
+{
+  "name": "wheres-waldo-backend",
+  "version": "1.0.0",
+  "description": "The backend for my Where's Waldo website",
+  "homepage": "https://github.com/vinsonio0920/wheres-waldo-backend#readme",
+  "bugs": {
+    "url": "https://github.com/vinsonio0920/wheres-waldo-backend/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vinsonio0920/wheres-waldo-backend.git"
+  },
+  "license": "AGPL-3.0",
+  "author": "Vinson",
+  "type": "module",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1"
+  },
+  "devDependencies": {
+    "prettier": "3.8.3"
+  }
+}
