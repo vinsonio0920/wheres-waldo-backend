@@ -1,0 +1,35 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Mission {
+  id Int @id @default(autoincrement())
+  image String
+  mission String
+  type String
+  targets Target[]
+  leaderboard LeaderboardEntry[]
+}
+
+model Target {
+  id Int @id @default(autoincrement())
+  name String
+  locations Json
+  sniped Boolean
+  mission Mission @relation(fields: [missionId], references: [id])
+  missionId Int
+}
+
+model LeaderboardEntry {
+  id Int @id @default(autoincrement())
+  name String
+  time Float
+  date DateTime @default(now())
+  mission Mission @relation(fields: [missionId], references: [id])
+  missionId Int
+}
