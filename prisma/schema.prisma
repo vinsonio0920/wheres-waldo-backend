@@ -20,7 +20,6 @@ model Target {
   id Int @id @default(autoincrement())
   name String
   locations Json
-  sniped Boolean
   mission Mission @relation(fields: [missionId], references: [id])
   missionId Int
 }
