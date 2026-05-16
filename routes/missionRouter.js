@@ -1,14 +1,18 @@
 import { Router } from "express";
+import {
+  createLeaderboardEntry,
+  createMission,
+  getAllMissions,
+  getMission,
+  getTarget,
+} from "../controllers/missonController";
 
 const missionRouter = Router();
 
-missionRouter.get("/", (req, res) => res.send("Get all missions!"));
-missionRouter.get("/:missionId", (req, res) => res.send("Get mission!"));
-missionRouter.get("/:missionId/targets/:targetId", (req, res) =>
-  res.send("Get target information!!"),
-);
-missionRouter.post("/:missionId/leaderboard", (req, res) =>
-  res.send("Add entry to the leaderboard"),
-);
+missionRouter.get("/", getAllMissions);
+missionRouter.post("/", createMission);
+missionRouter.get("/:missionId", getMission);
+missionRouter.get("/:missionId/targets/:targetId", getTarget);
+missionRouter.post("/:missionId/leaderboard", createLeaderboardEntry);
 
 export { missionRouter };
