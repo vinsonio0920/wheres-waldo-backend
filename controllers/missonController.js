@@ -1,9 +1,82 @@
+import { body, validationResult, matchedData } from "express-validator";
 import {
+  createMissionQuery,
   getAllLeaderboardEntriesQuery,
   getAllMissionsQuery,
   getMissionQuery,
   getTargetQuery,
 } from "../db/Mission.js";
+
+const requiredErr = "is required";
+const lengthError = (min, max) =>
+  `must be between ${min} and ${max} characters`;
+
+const validateMission = [
+  body("image")
+    .trim()
+    .notEmpty()
+    .withMessage(`Image ${requiredErr}`)
+    .bail()
+    .isLength({ min: 1, max: 264 })
+    .withMessage(`Image ${lengthError(1, 264)}`),
+  body("mission")
+    .trim()
+    .notEmpty()
+    .withMessage(`Mission ${requiredErr}`)
+    .bail()
+    .isLength({ min: 1, max: 64 })
+    .withMessage(`Mission ${lengthError(1, 64)}`),
+  body("type")
+    .trim()
+    .notEmpty()
+    .withMessage(`Type ${requiredErr}`)
+    .bail()
+    .custom((value) => {
+      const validTypes = ["single", "multiple unique", "multiple same"];
+
+      if (!validTypes.includes(value)) throw new Error("Not a valid type");
+
+      return true;
+    })
+    .withMessage("Type is not valid"),
+];
+
+const validateTarget = [
+  body("name")
+    .trim()
+    .notEmpty()
+    .withMessage(`Name ${requiredErr}`)
+    .bail()
+    .isLength({ min: 1, max: 16 })
+    .withMessage(`Name ${lengthError(1, 16)}`),
+  body("locations")
+    .custom((value) => {
+      if (!Array.isArray) throw new Error("Locations must be an array");
+
+      return true;
+    })
+    .withMessage("Locations must be a valid array!"),
+];
+
+const validateLeaderboardEntry = [
+  body("name")
+    .trim()
+    .notEmpty()
+    .withMessage(`Name ${requiredErr}`)
+    .bail()
+    .isLength({ min: 1, max: 26 })
+    .withMessage(`Name ${lengthError(1, 26)}`),
+  body("time")
+    .custom((value) => {
+      const timeFormat = /^\d+\.\d{2}$/;
+
+      if (!timeFormat.test(String(value)))
+        throw new Error("Time is not formatted correctly!");
+
+      return true;
+    })
+    .withMessage("Time is not valid"),
+];
 
 async function getAllMissions(req, res) {
   try {
@@ -57,7 +130,43 @@ async function getMission(req, res) {
   }
 }
 
-async function createMission(req, res) {}
+const createMission = [
+  validateMission,
+  async (req, res, next) => {
+    console.log(req.body);
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        code: 400,
+        message: "The form is invalid. Please try again.",
+        errors: errors.array(),
+      });
+    }
+
+    const values = matchedData(req);
+    try {
+      console.log(values);
+      const mission = await createMissionQuery(values);
+
+      return res.json({
+        data: {
+          updated: new Date(),
+          totalItems: 1,
+          startIndex: 1,
+          itemsPerPage: 1,
+          items: [mission],
+        },
+      });
+    } catch (error) {
+      console.error(error);
+      return res.json({
+        code: 500,
+        message:
+          "There was an error creating the mission. Please try again later.",
+      });
+    }
+  },
+];
 
 async function getTarget(req, res) {
   const { missionId, targetId } = req.params;
@@ -112,7 +221,7 @@ async function getAllLeaderboardEntries(req, res) {
   }
 }
 
-async function createLeaderboardEntry(req, res) {}
+const createLeaderboardEntry = [validateLeaderboardEntry];
 
 export {
   getAllMissions,
