@@ -57,9 +57,17 @@ async function getAllLeaderboardEntriesQuery(missionId) {
       id: Number(missionId),
     },
   });
+
+  return leaderboardEntries;
 }
 
-async function createLeaderboardEntryQuery() {}
+async function createLeaderboardEntryQuery(values) {
+  const leaderboardEntry = await prisma.leaderboardEntry.create({
+    data: values,
+  });
+
+  return leaderboardEntry;
+}
 
 export {
   getAllMissionsQuery,
