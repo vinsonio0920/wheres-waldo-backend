@@ -1,6 +1,7 @@
 import { body, validationResult, matchedData } from "express-validator";
 import {
   createMissionQuery,
+  createTargetQuery,
   getAllLeaderboardEntriesQuery,
   getAllMissionsQuery,
   getMissionQuery,
@@ -51,11 +52,26 @@ const validateTarget = [
     .withMessage(`Name ${lengthError(1, 16)}`),
   body("locations")
     .custom((value) => {
-      if (!Array.isArray) throw new Error("Locations must be an array");
+      const parsedValue = JSON.parse(value);
+
+      if (!Array.isArray(parsedValue))
+        throw new Error("Locations must be an array");
+      if (parsedValue.length <= 0)
+        throw new Error("Locations must not be empty!");
 
       return true;
     })
     .withMessage("Locations must be a valid array!"),
+  body("missionId")
+    .trim()
+    .custom(async (value) => {
+      const mission = await getMissionQuery(value);
+
+      if (!mission) throw new Error("Invalid mission ID!");
+
+      return true;
+    })
+    .withMessage("Mission ID is not valid"),
 ];
 
 const validateLeaderboardEntry = [
@@ -93,7 +109,7 @@ async function getAllMissions(req, res) {
     });
   } catch (error) {
     console.error(error);
-    return res.json({
+    return res.status(500).json({
       error: {
         code: 500,
         message:
@@ -120,7 +136,7 @@ async function getMission(req, res) {
     });
   } catch (error) {
     console.error(error);
-    return res.json({
+    return res.status(500).json({
       error: {
         code: 500,
         message:
@@ -132,8 +148,7 @@ async function getMission(req, res) {
 
 const createMission = [
   validateMission,
-  async (req, res, next) => {
-    console.log(req.body);
+  async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({
@@ -145,7 +160,6 @@ const createMission = [
 
     const values = matchedData(req);
     try {
-      console.log(values);
       const mission = await createMissionQuery(values);
 
       return res.json({
@@ -159,7 +173,7 @@ const createMission = [
       });
     } catch (error) {
       console.error(error);
-      return res.json({
+      return res.status(500).json({
         code: 500,
         message:
           "There was an error creating the mission. Please try again later.",
@@ -185,7 +199,7 @@ async function getTarget(req, res) {
     });
   } catch (error) {
     console.error(error);
-    return res.json({
+    return res.status(500).json({
       error: {
         code: 500,
         message:
@@ -194,6 +208,46 @@ async function getTarget(req, res) {
     });
   }
 }
+
+const createTarget = [
+  validateTarget,
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        code: 400,
+        message: "The form is invalid. Please try again.",
+        errors: errors.array(),
+      });
+    }
+
+    const values = matchedData(req);
+    try {
+      const formattedValues = {
+        ...values,
+        missionId: Number(values.missionId),
+      };
+      const target = await createTargetQuery(formattedValues);
+
+      return res.json({
+        data: {
+          updated: new Date(),
+          totalItems: 1,
+          startIndex: 1,
+          itemsPerPage: 1,
+          items: [target],
+        },
+      });
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({
+        code: 500,
+        message:
+          "There was an error creating the target. Please try again later.",
+      });
+    }
+  },
+];
 
 async function getAllLeaderboardEntries(req, res) {
   const { missionId } = req.params;
@@ -211,7 +265,7 @@ async function getAllLeaderboardEntries(req, res) {
     });
   } catch (error) {
     console.error(error);
-    return res.json({
+    return res.status(500).json({
       error: {
         code: 500,
         message:
@@ -228,6 +282,7 @@ export {
   getMission,
   createMission,
   getTarget,
+  createTarget,
   getAllLeaderboardEntries,
   createLeaderboardEntry,
 };

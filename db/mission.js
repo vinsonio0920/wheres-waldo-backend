@@ -43,6 +43,14 @@ async function getTargetQuery(missionId, targetId) {
   return target;
 }
 
+async function createTargetQuery(values) {
+  const target = await prisma.target.create({
+    data: values,
+  });
+
+  return target;
+}
+
 async function getAllLeaderboardEntriesQuery(missionId) {
   const leaderboardEntries = await prisma.leaderboardEntry.findMany({
     where: {
@@ -58,6 +66,7 @@ export {
   getMissionQuery,
   createMissionQuery,
   getTargetQuery,
+  createTargetQuery,
   getAllLeaderboardEntriesQuery,
   createLeaderboardEntryQuery,
 };
