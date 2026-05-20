@@ -107,14 +107,14 @@ const validateLeaderboardEntry = [
 
 async function getAllMissions(req, res) {
   try {
-    const missions = await getAllMissionsQuery();
+    const { missions, missionLength } = await getAllMissionsQuery();
 
     return res.json({
       data: {
         updated: new Date(),
-        totalItems: 1,
+        totalItems: missionLength,
         startIndex: 1,
-        itemsPerPage: 1,
+        itemsPerPage: 10,
         items: missions,
       },
     });
@@ -185,9 +185,11 @@ const createMission = [
     } catch (error) {
       console.error(error);
       return res.status(500).json({
-        code: 500,
-        message:
-          "There was an error creating the mission. Please try again later.",
+        error: {
+          code: 500,
+          message:
+            "There was an error creating the mission. Please try again later.",
+        },
       });
     }
   },
@@ -252,9 +254,11 @@ const createTarget = [
     } catch (error) {
       console.error(error);
       return res.status(500).json({
-        code: 500,
-        message:
-          "There was an error creating the target. Please try again later.",
+        error: {
+          code: 500,
+          message:
+            "There was an error creating the target. Please try again later.",
+        },
       });
     }
   },
@@ -262,13 +266,15 @@ const createTarget = [
 
 async function getAllLeaderboardEntries(req, res) {
   const { missionId } = req.params;
+  const { cursor } = req.query;
 
   try {
-    const leaderboardEntries = await getAllLeaderboardEntriesQuery(missionId);
+    const { leaderboardEntries, leaderboardEntriesLength } =
+      await getAllLeaderboardEntriesQuery(missionId, cursor);
 
     return res.json({
       data: {
-        totalItems: 1,
+        totalItems: leaderboardEntriesLength,
         startIndex: 1,
         itemsPerPage: 10,
         items: leaderboardEntries || [],
@@ -320,9 +326,11 @@ const createLeaderboardEntry = [
     } catch (error) {
       console.error(error);
       return res.status(500).json({
-        code: 500,
-        message:
-          "There was an error creating the leaderboard entry. Please try again later.",
+        error: {
+          code: 500,
+          message:
+            "There was an error creating the leaderboard entry. Please try again later.",
+        },
       });
     }
   },

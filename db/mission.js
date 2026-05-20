@@ -1,13 +1,32 @@
 import { prisma } from "../lib/prisma.js";
 
-async function getAllMissionsQuery() {
-  const missions = await prisma.mission.findMany({
-    include: {
-      targets: true,
-    },
-  });
+async function getAllMissionsQuery(cursor) {
+  let missions;
+  if (cursor) {
+    missions = await prisma.mission.findMany({
+      take: 10,
+      skip: 1,
+      cursor: {
+        id: Number(cursor),
+      },
+      include: {
+        targets: true,
+      },
+    });
+  } else {
+    // No take for now as there's no need for pagination currently
+    // But it could be easily implemented if needed in the future!
+    missions = await prisma.mission.findMany({
+      // take: 10,
+      include: {
+        targets: true,
+      },
+    });
+  }
 
-  return missions;
+  const missionLength = await prisma.mission.count();
+
+  return { missions, missionLength };
 }
 
 async function getMissionQuery(missionId) {
@@ -17,7 +36,6 @@ async function getMissionQuery(missionId) {
     },
     include: {
       targets: true,
-      leaderboard: true,
     },
   });
 
@@ -51,14 +69,35 @@ async function createTargetQuery(values) {
   return target;
 }
 
-async function getAllLeaderboardEntriesQuery(missionId) {
-  const leaderboardEntries = await prisma.leaderboardEntry.findMany({
+async function getAllLeaderboardEntriesQuery(missionId, cursor) {
+  let leaderboardEntries;
+  if (cursor) {
+    leaderboardEntries = await prisma.leaderboardEntry.findMany({
+      take: 10,
+      skip: 1,
+      cursor: {
+        id: Number(cursor),
+      },
+      where: {
+        missionId: Number(missionId),
+      },
+    });
+  } else {
+    leaderboardEntries = await prisma.leaderboardEntry.findMany({
+      take: 10,
+      where: {
+        missionId: Number(missionId),
+      },
+    });
+  }
+
+  const leaderboardEntriesLength = await prisma.leaderboardEntry.count({
     where: {
-      id: Number(missionId),
+      missionId: Number(missionId),
     },
   });
 
-  return leaderboardEntries;
+  return { leaderboardEntries, leaderboardEntriesLength };
 }
 
 async function createLeaderboardEntryQuery(values) {
