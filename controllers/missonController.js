@@ -10,6 +10,7 @@ import {
 } from "../db/Mission.js";
 
 const requiredErr = "is required";
+const intError = "must be an integer";
 const lengthError = (min, max) =>
   `must be between ${min} and ${max} characters`;
 
@@ -73,6 +74,21 @@ const validateTarget = [
       return true;
     })
     .withMessage("Mission ID is not valid"),
+];
+
+const validateTargetClickForm = [
+  body("x")
+    .notEmpty()
+    .withMessage(`X coordinate ${requiredErr}`)
+    .bail()
+    .isInt()
+    .withMessage(`X coordinate ${intError}`),
+  body("y")
+    .notEmpty()
+    .withMessage(`Y coordinate ${requiredErr}`)
+    .bail()
+    .isInt()
+    .withMessage(`Y coordinate ${intError}`),
 ];
 
 const validateLeaderboardEntry = [
@@ -222,6 +238,57 @@ async function getTarget(req, res) {
   }
 }
 
+const validateTargetClick = [
+  validateTargetClickForm,
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        code: 400,
+        message: "The form is invalid. Please try again.",
+        errors: errors.array(),
+      });
+    }
+
+    // return whether or not the click is inside of the target's locations!
+    const { missionId, targetId } = req.params;
+    const { x, y } = matchedData(req);
+
+    try {
+      const target = await getTargetQuery(missionId, targetId);
+      if (!target) throw new Error("No target found!");
+
+      let targetFound = false;
+      const locations = JSON.parse(target.locations);
+      locations.forEach((location) => {
+        console.log(location);
+        // check if the click is inside one of the target's box
+        const isInsideX = location[0][0] <= x && x <= location[0][1];
+        const isInsideY = location[1][0] <= y && y <= location[1][1];
+
+        if (isInsideX && isInsideY) {
+          targetFound = true;
+        }
+      });
+
+      return res.json({
+        data: {
+          targetFound,
+        },
+      });
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({
+        error: {
+          code: 500,
+          message:
+            "There was an error validating the target. Please try again later.",
+        },
+      });
+    }
+  },
+];
+
 const createTarget = [
   validateTarget,
   async (req, res) => {
@@ -341,6 +408,7 @@ export {
   getMission,
   createMission,
   getTarget,
+  validateTargetClick,
   createTarget,
   getAllLeaderboardEntries,
   createLeaderboardEntry,
