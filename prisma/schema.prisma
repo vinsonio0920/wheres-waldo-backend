@@ -8,27 +8,27 @@ datasource db {
 }
 
 model Mission {
-  id Int @id @default(autoincrement())
-  image String
-  mission String
-  type String
-  targets Target[]
+  id          Int                @id @default(autoincrement())
+  image       String
+  mission     String
+  type        String
+  targets     Target[]
   leaderboard LeaderboardEntry[]
 }
 
 model Target {
-  id Int @id @default(autoincrement())
-  name String
-  locations Json
-  mission Mission @relation(fields: [missionId], references: [id])
+  id        Int     @id @default(autoincrement())
+  name      String
+  locations String
+  mission   Mission @relation(fields: [missionId], references: [id])
   missionId Int
 }
 
 model LeaderboardEntry {
-  id Int @id @default(autoincrement())
-  name String
-  time Float
-  date DateTime @default(now())
-  mission Mission @relation(fields: [missionId], references: [id])
+  id        Int      @id @default(autoincrement())
+  name      String
+  time      Float
+  date      DateTime @default(now())
+  mission   Mission  @relation(fields: [missionId], references: [id])
   missionId Int
 }
