@@ -10,7 +10,7 @@ import {
 } from "../db/Mission.js";
 
 const requiredErr = "is required";
-const intError = "must be an integer";
+const intError = "must be a positive integer or float ending in .5";
 const lengthError = (min, max) =>
   `must be between ${min} and ${max} characters`;
 
@@ -81,14 +81,16 @@ const validateTargetClickForm = [
     .notEmpty()
     .withMessage(`X coordinate ${requiredErr}`)
     .bail()
-    .isInt()
-    .withMessage(`X coordinate ${intError}`),
+    .matches(/^\d+(\.5)?$/)
+    .withMessage(`X coordinate ${intError}`)
+    .toFloat(),
   body("y")
     .notEmpty()
     .withMessage(`Y coordinate ${requiredErr}`)
     .bail()
-    .isInt()
-    .withMessage(`Y coordinate ${intError}`),
+    .matches(/^\d+(\.5)?$/)
+    .withMessage(`Y coordinate ${intError}`)
+    .toFloat(),
 ];
 
 const validateLeaderboardEntry = [
@@ -263,8 +265,8 @@ const validateTargetClick = [
       locations.forEach((location) => {
         console.log(location);
         // check if the click is inside one of the target's box
-        const isInsideX = location[0][0] <= x && x <= location[0][1];
-        const isInsideY = location[1][0] <= y && y <= location[1][1];
+        const isInsideX = location[0][0] <= x && x <= location[1][0];
+        const isInsideY = location[0][1] <= y && y <= location[1][1];
 
         if (isInsideX && isInsideY) {
           targetFound = true;
@@ -273,7 +275,16 @@ const validateTargetClick = [
 
       return res.json({
         data: {
-          targetFound,
+          updated: new Date(),
+          totalItems: 1,
+          startIndex: 1,
+          itemsPerPage: 1,
+          items: [
+            {
+              ...target,
+              targetFound,
+            },
+          ],
         },
       });
     } catch (error) {
