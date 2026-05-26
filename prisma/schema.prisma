@@ -32,3 +32,11 @@ model LeaderboardEntry {
   mission   Mission  @relation(fields: [missionId], references: [id])
   missionId Int
 }
+
+model Session {
+  id        String   @id
+  sid       String   @unique
+  data      String
+  expiresAt DateTime
+  startDate DateTime @default(now())
+}
