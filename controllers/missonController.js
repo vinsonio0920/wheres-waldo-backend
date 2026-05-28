@@ -181,9 +181,11 @@ const createMission = [
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({
-        code: 400,
-        message: "The form is invalid. Please try again.",
-        errors: errors.array(),
+        error: {
+          code: 400,
+          message: "The form is invalid. Please try again.",
+          errors: errors.array(),
+        },
       });
     }
 
@@ -234,7 +236,7 @@ async function getTarget(req, res) {
       error: {
         code: 500,
         message:
-          "There was an error validating the target. Please try again later.",
+          "There was an error fetching the target. Please try again later.",
       },
     });
   }
@@ -246,9 +248,11 @@ const validateTargetClick = [
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({
-        code: 400,
-        message: "The form is invalid. Please try again.",
-        errors: errors.array(),
+        error: {
+          code: 400,
+          message: "The form is invalid. Please try again.",
+          errors: errors.array(),
+        },
       });
     }
 
@@ -376,9 +380,11 @@ const createLeaderboardEntry = [
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({
-        code: 400,
-        message: "The form is invalid. Please try again.",
-        errors: errors.array(),
+        error: {
+          code: 400,
+          message: "The form is invalid. Please try again.",
+          errors: errors.array(),
+        },
       });
     }
 
