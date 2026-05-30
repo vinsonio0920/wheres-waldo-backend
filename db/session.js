@@ -1,4 +1,4 @@
-import { prisma } from "../lib/prisma";
+import { prisma } from "../lib/prisma.js";
 
 async function getSessionQuery(sessionId) {
   const session = await prisma.session.findUnique({
@@ -9,3 +9,5 @@ async function getSessionQuery(sessionId) {
 
   return session;
 }
+
+export { getSessionQuery };

@@ -277,6 +277,7 @@ const validateTargetClick = [
         }
       });
 
+      // we're also going to get the session, get the time it took, and return it in the JSON response
       return res.json({
         data: {
           updated: new Date(),

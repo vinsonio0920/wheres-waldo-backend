@@ -8,7 +8,7 @@ import {
   getMission,
   getTarget,
   validateTargetClick,
-} from "../controllers/missonController.js";
+} from "../controllers/missionController.js";
 
 const missionRouter = Router();
 
