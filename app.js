@@ -24,7 +24,12 @@ app.use(
   }),
 );
 app.use(express.urlencoded({ extended: true }));
-app.use(cors());
+app.use(
+  cors({
+    origin: process.env.ORIGIN,
+    credentials: "include",
+  }),
+);
 
 app.use("/missions", missionRouter);
 app.get("/test", async (req, res) => {

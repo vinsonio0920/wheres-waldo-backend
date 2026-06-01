@@ -8,6 +8,7 @@ import {
   getMissionQuery,
   getTargetQuery,
 } from "../db/Mission.js";
+import { getSession } from "./sessionController.js";
 
 const requiredErr = "is required";
 const intError = "must be a positive integer or float ending in .5";
@@ -148,7 +149,18 @@ async function getAllMissions(req, res) {
   }
 }
 
-async function getMission(req, res) {
+async function getMission(req, res, next) {
+  // every time we load/reset a mission, we reset the stopwatch!
+  req.session.stopwatchStart = Date.now();
+
+  // make sure that the change is saved onto the database (sync)
+  await new Promise((resolve, reject) => {
+    req.session.save((err) => {
+      if (err) reject(err);
+      else resolve();
+    });
+  });
+
   const { missionId } = req.params;
 
   try {
@@ -267,7 +279,6 @@ const validateTargetClick = [
       let targetFound = false;
       const locations = JSON.parse(target.locations);
       locations.forEach((location) => {
-        console.log(location);
         // check if the click is inside one of the target's box
         const isInsideX = location[0][0] <= x && x <= location[1][0];
         const isInsideY = location[0][1] <= y && y <= location[1][1];
@@ -278,6 +289,8 @@ const validateTargetClick = [
       });
 
       // we're also going to get the session, get the time it took, and return it in the JSON response
+      // get the time it took to find the target
+      console.log(req.session.stopwatchStart);
       return res.json({
         data: {
           updated: new Date(),
