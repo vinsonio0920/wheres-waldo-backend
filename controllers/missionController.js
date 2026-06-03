@@ -103,7 +103,6 @@ const validateLeaderboardEntry = [
     .bail()
     .isLength({ min: 1, max: 26 })
     .withMessage(`Name ${lengthError(1, 26)}`),
-  body("time").isInt().withMessage("Time is not valid"),
   body("missionId")
     .trim()
     .custom(async (value) => {
@@ -283,7 +282,7 @@ const validateTargetClick = [
       // get the time it took to find the target along with the rank
       const timeTaken = getTime(req.session.stopwatchStart);
       const rank = await getRank(missionId, req.session.stopwatchStart);
-      req.session.timeTaken = timeTaken;
+      req.session.timeTaken = Date.now() - req.session.stopwatchStart;
 
       return res.json({
         data: {
@@ -402,7 +401,7 @@ const createLeaderboardEntry = [
     try {
       const formattedValues = {
         ...values,
-        time: Number(values.time),
+        time: Number(req.session.timeTaken),
         missionId: Number(values.missionId),
       };
       const leaderboardEntry =
