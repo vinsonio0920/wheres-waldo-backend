@@ -9,6 +9,7 @@ import {
   getTargetQuery,
 } from "../db/Mission.js";
 import { getSession } from "./sessionController.js";
+import { getTime } from "../utils.js";
 
 const requiredErr = "is required";
 const intError = "must be a positive integer or float ending in .5";
@@ -288,9 +289,8 @@ const validateTargetClick = [
         }
       });
 
-      // we're also going to get the session, get the time it took, and return it in the JSON response
       // get the time it took to find the target
-      console.log(req.session.stopwatchStart);
+      const timeTaken = getTime(req.session.stopwatchStart);
       return res.json({
         data: {
           updated: new Date(),
@@ -303,6 +303,7 @@ const validateTargetClick = [
               targetFound,
             },
           ],
+          timeTaken,
         },
       });
     } catch (error) {
