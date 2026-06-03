@@ -1,7 +1,8 @@
+import { getLeaderboardRankQuery } from "./db/Mission.js";
 import { prisma } from "./lib/prisma.js";
 
 function getTime(startTime) {
-  // do logic to return seconds/minutes/hours/days to find the target
+  // logic to return seconds/minutes/hours/days to find the target
   const currentTime = Date.now();
   const timeTaken = currentTime - startTime;
 
@@ -44,4 +45,14 @@ function getTime(startTime) {
   return formattedTime;
 }
 
-export { getTime };
+async function getRank(missionId, startTime) {
+  // gets the rank compared to the existing leaderboard entries
+  const currentTime = Date.now();
+  const timeTaken = currentTime - startTime;
+
+  const rank = await getLeaderboardRankQuery(missionId, timeTaken);
+
+  return rank;
+}
+
+export { getTime, getRank };

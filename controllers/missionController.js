@@ -9,7 +9,7 @@ import {
   getTargetQuery,
 } from "../db/Mission.js";
 import { getSession } from "./sessionController.js";
-import { getTime } from "../utils.js";
+import { getRank, getTime } from "../utils.js";
 
 const requiredErr = "is required";
 const intError = "must be a positive integer or float ending in .5";
@@ -103,16 +103,7 @@ const validateLeaderboardEntry = [
     .bail()
     .isLength({ min: 1, max: 26 })
     .withMessage(`Name ${lengthError(1, 26)}`),
-  body("time")
-    .custom((value) => {
-      const timeFormat = /^\d+\.\d{2}$/;
-
-      if (!timeFormat.test(String(value)))
-        throw new Error("Time is not formatted correctly!");
-
-      return true;
-    })
-    .withMessage("Time is not valid"),
+  body("time").isInt().withMessage("Time is not valid"),
   body("missionId")
     .trim()
     .custom(async (value) => {
@@ -289,8 +280,11 @@ const validateTargetClick = [
         }
       });
 
-      // get the time it took to find the target
+      // get the time it took to find the target along with the rank
       const timeTaken = getTime(req.session.stopwatchStart);
+      const rank = await getRank(missionId, req.session.stopwatchStart);
+      req.session.timeTaken = timeTaken;
+
       return res.json({
         data: {
           updated: new Date(),
@@ -301,9 +295,10 @@ const validateTargetClick = [
             {
               ...target,
               targetFound,
+              timeTaken,
+              rank,
             },
           ],
-          timeTaken,
         },
       });
     } catch (error) {

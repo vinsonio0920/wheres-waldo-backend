@@ -81,6 +81,7 @@ async function getAllLeaderboardEntriesQuery(missionId, cursor) {
       where: {
         missionId: Number(missionId),
       },
+      orderBy: [{ time: "asc" }, { id: "asc" }],
     });
   } else {
     leaderboardEntries = await prisma.leaderboardEntry.findMany({
@@ -88,6 +89,7 @@ async function getAllLeaderboardEntriesQuery(missionId, cursor) {
       where: {
         missionId: Number(missionId),
       },
+      orderBy: [{ time: "asc" }, { id: "asc" }],
     });
   }
 
@@ -98,6 +100,23 @@ async function getAllLeaderboardEntriesQuery(missionId, cursor) {
   });
 
   return { leaderboardEntries, leaderboardEntriesLength };
+}
+
+async function getLeaderboardRankQuery(missionId, timeTaken) {
+  // note that the count includes every duplicate time as well!
+  const entriesAhead = await prisma.leaderboardEntry.count({
+    where: {
+      missionId: Number(missionId),
+      time: {
+        lte: Number(timeTaken),
+      },
+    },
+  });
+
+  // we add an extra number to the entriesAhead because our leaderboard orders by
+  // both time and id, meaning that the same time with newer id will naturally
+  // be the last in the rank!
+  return entriesAhead + 1;
 }
 
 async function createLeaderboardEntryQuery(values) {
@@ -115,5 +134,6 @@ export {
   getTargetQuery,
   createTargetQuery,
   getAllLeaderboardEntriesQuery,
+  getLeaderboardRankQuery,
   createLeaderboardEntryQuery,
 };
