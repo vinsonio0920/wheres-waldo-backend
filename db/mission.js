@@ -75,9 +75,7 @@ async function getAllLeaderboardEntriesQuery(missionId, cursor) {
     leaderboardEntries = await prisma.leaderboardEntry.findMany({
       take: 10,
       skip: 1,
-      cursor: {
-        id: Number(cursor),
-      },
+      cursor: JSON.parse(cursor),
       where: {
         missionId: Number(missionId),
       },
