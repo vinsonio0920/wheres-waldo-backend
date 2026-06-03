@@ -27,7 +27,7 @@ model Target {
 model LeaderboardEntry {
   id        Int      @id @default(autoincrement())
   name      String
-  time      Float
+  time      Int
   date      DateTime @default(now())
   mission   Mission  @relation(fields: [missionId], references: [id])
   missionId Int
