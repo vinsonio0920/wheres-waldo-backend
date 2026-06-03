@@ -31,6 +31,8 @@ model LeaderboardEntry {
   date      DateTime @default(now())
   mission   Mission  @relation(fields: [missionId], references: [id])
   missionId Int
+
+  @@unique([time, id])
 }
 
 model Session {
