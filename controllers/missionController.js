@@ -83,16 +83,45 @@ const validateTargetClickForm = [
     .notEmpty()
     .withMessage(`X coordinate ${requiredErr}`)
     .bail()
-    .matches(/^\d+(\.5)?$/)
+    .isNumeric()
     .withMessage(`X coordinate ${intError}`)
     .toFloat(),
   body("y")
     .notEmpty()
     .withMessage(`Y coordinate ${requiredErr}`)
     .bail()
-    .matches(/^\d+(\.5)?$/)
+    .isNumeric()
     .withMessage(`Y coordinate ${intError}`)
     .toFloat(),
+];
+
+const validateMultipleSameTargetClickForm = [
+  body("x")
+    .notEmpty()
+    .withMessage(`X coordinate ${requiredErr}`)
+    .bail()
+    .isNumeric()
+    .withMessage(`X coordinate ${intError}`)
+    .toFloat(),
+  body("y")
+    .notEmpty()
+    .withMessage(`Y coordinate ${requiredErr}`)
+    .bail()
+    .isNumeric()
+    .withMessage(`Y coordinate ${intError}`)
+    .toFloat(),
+  body("targetIds")
+    .custom((value) => {
+      const parsedValue = JSON.parse(value);
+
+      if (!Array.isArray(parsedValue))
+        throw new Error("Locations must be an array");
+      if (parsedValue.length <= 0)
+        throw new Error("Locations must not be empty!");
+
+      return true;
+    })
+    .withMessage("Locations must be a valid array!"),
 ];
 
 const validateLeaderboardEntry = [
@@ -313,6 +342,95 @@ const validateTargetClick = [
   },
 ];
 
+const validateMultipleSameTargetClick = [
+  validateMultipleSameTargetClickForm,
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        error: {
+          code: 400,
+          message: "The form is invalid. Please try again.",
+          errors: errors.array(),
+        },
+      });
+    }
+
+    // return whether or not the click is inside of the target's locations!
+    const { missionId } = req.params;
+    const { x, y, targetIds } = matchedData(req);
+    const targetIdsArray = JSON.parse(targetIds);
+
+    try {
+      let targetFound = false;
+
+      for (const targetId of targetIdsArray) {
+        const target = await getTargetQuery(missionId, targetId);
+        if (!target) throw new Error("No target was found from targetId!");
+
+        const locations = JSON.parse(target.locations);
+        locations.forEach((location) => {
+          // check if the click is inside one of the target's box
+          const isInsideX = location[0][0] <= x && x <= location[1][0];
+          const isInsideY = location[0][1] <= y && y <= location[1][1];
+
+          if (isInsideX && isInsideY) {
+            targetFound = true;
+          }
+        });
+
+        if (targetFound) {
+          // get the time it took to find the target along with the rank
+          const timeTaken = getTime(req.session.stopwatchStart);
+          const rank = await getRank(missionId, req.session.stopwatchStart);
+          req.session.timeTaken = Date.now() - req.session.stopwatchStart;
+
+          return res.json({
+            data: {
+              updated: new Date(),
+              totalItems: 1,
+              startIndex: 1,
+              itemsPerPage: 1,
+              items: [
+                {
+                  ...target,
+                  targetFound,
+                  timeTaken,
+                  rank,
+                },
+              ],
+            },
+          });
+        }
+      }
+
+      // no targets found
+      return res.json({
+        data: {
+          updated: new Date(),
+          totalItems: 1,
+          startIndex: 1,
+          itemsPerPage: 1,
+          items: [
+            {
+              targetFound,
+            },
+          ],
+        },
+      });
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({
+        error: {
+          code: 500,
+          message:
+            "There was an error validating the target. Please try again later.",
+        },
+      });
+    }
+  },
+];
+
 const createTarget = [
   validateTarget,
   async (req, res) => {
@@ -435,6 +553,7 @@ export {
   createMission,
   getTarget,
   validateTargetClick,
+  validateMultipleSameTargetClick,
   createTarget,
   getAllLeaderboardEntries,
   createLeaderboardEntry,

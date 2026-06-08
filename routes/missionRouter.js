@@ -7,6 +7,7 @@ import {
   getAllMissions,
   getMission,
   getTarget,
+  validateMultipleSameTargetClick,
   validateTargetClick,
 } from "../controllers/missionController.js";
 
@@ -17,6 +18,10 @@ missionRouter.post("/", createMission);
 missionRouter.get("/:missionId", getMission);
 missionRouter.post("/:missionId/targets", createTarget);
 missionRouter.get("/:missionId/targets/:targetId", getTarget);
+missionRouter.post(
+  "/:missionId/targets/multiple/validate",
+  validateMultipleSameTargetClick,
+);
 missionRouter.post(
   "/:missionId/targets/:targetId/validate",
   validateTargetClick,
