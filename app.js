@@ -32,30 +32,11 @@ app.use(
 );
 
 app.use("/missions", missionRouter);
-app.get("/test", async (req, res) => {
-  console.log("before save:", req.sessionID);
 
-  await new Promise((resolve, reject) => {
-    req.session.save((err) => {
-      if (err) reject(err);
-      else resolve();
-    });
-  });
+app.use((err, req, res, next) => {
+  console.error(err);
 
-  console.log("after save");
-
-  const byId = await prisma.session.findUnique({
-    where: {
-      id: req.sessionID,
-    },
-  });
-
-  console.log(byId);
-
-  res.json({
-    sessionID: req.sessionID,
-    byId,
-  });
+  res.status(500).send("Internal Server Error.");
 });
 
 const PORT = process.env.PORT || 3000;
