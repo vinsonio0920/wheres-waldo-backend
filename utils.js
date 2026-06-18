@@ -1,4 +1,4 @@
-import { getLeaderboardRankQuery } from "./db/Mission.js";
+import { getLeaderboardRankQuery } from "./db/mission.js";
 import { prisma } from "./lib/prisma.js";
 
 function getTime(startTime) {
