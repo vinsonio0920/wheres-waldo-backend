@@ -36,7 +36,7 @@ function getTime(startTime) {
         .replace(/\./, ":")}m`;
     } else {
       formattedTime = `${numberFormat
-        .format(timeTaken / minute)
+        .format(timeTaken / 1000)
         .toString()
         .replace(/\./, ":")}s`;
     }
