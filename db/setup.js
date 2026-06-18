@@ -1,6 +1,9 @@
 import { prisma } from "../lib/prisma.js";
 
 async function main() {
+  const missionRows = await prisma.mission.findMany();
+  if (missionRows.length > 0) return console.log("Database already set up!");
+
   // Panda Mission
   const pandaMission = await prisma.mission.create({
     data: {

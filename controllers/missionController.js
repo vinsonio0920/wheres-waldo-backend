@@ -7,7 +7,7 @@ import {
   getAllMissionsQuery,
   getMissionQuery,
   getTargetQuery,
-} from "../db/Mission.js";
+} from "../db/mission.js";
 import { getSession } from "./sessionController.js";
 import { getRank, getTime } from "../utils.js";
 
