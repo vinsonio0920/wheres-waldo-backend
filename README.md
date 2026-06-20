@@ -39,10 +39,10 @@ This is the backend and the core of the Where's Waldo app. It gives the frontend
       <a href="#usage">Usage</a>
       <ul>
         <li>
-          <a href="reading-missions-targets-and-leaderboard-entries">Reading missions, targets, and leaderboard entries</a>
+          <a href="#reading-missions-targets-and-leaderboard-entries">Reading missions, targets, and leaderboard entries</a>
         </li>
         <li>
-          <a href="creating-missions-targets-and-leaderboard-entries">Creating missions, targets, and leaderboard entries</a>
+          <a href="#creating-missions-targets-and-leaderboard-entries">Creating missions, targets, and leaderboard entries</a>
         </li>
       </ul>
     </li>
@@ -214,5 +214,15 @@ Along with the major frameworks and libraries, there are also some lesser librar
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ## Lessons Learned
+
+This was a great project for learning, not to mention the fun I had in making this small game. Thanks to a tight scope and good time management I was able to complete this project on time. While there were days where I had little progress, there were also days where I got so much done. Every single day I showed up was a day that I got better at programming. Now, at the finish line, I've come to learn that it's not so much about what you've got done at the end of the day but rather the fact that you showed up and did your best. Consistency in the long term always shows big progress as long as you get 1% better every single day.
+
+The main thing that I took away from all this is to try your best everyday. There were indeed moments where I could've done better. I do admit that most days when I did the project I tried my damndest to do the least so I can at least say I did something while procrastinating. In fact, some days I felt like I was in limbo with my personal life and laziness interfering with what I wanted to achieve with my project and that was not a good feeling. I knew I could do better, yet everyday I could only eke out only a fraction of what I demanded of myself. As with all my previous projects, the completion and tasks in front of me were like Mount Everest in the eyes of an ant.
+
+Despite all this, I forced myself to keep going. To complete at least one small task a day. Even with the daunting task and never-ending bugs that I had to face. Even with all of the features and scope creeps that lunged out at me, I still woke up everyday determined to do at least one thing right when programming. It eventually became a habit of mine, and that habit of mine kept me going to complete projects after projects. Now this project is finally done.
+
+It's easy to want to be a new person overnight, and I've tried that probably over 100 thousand times throughout my life. But throughout this I realized that it's the small changes that make the biggest impacts. They're the ones that help you grow and change as a person, for better or worse. It's okay to want to change overnight, but you need to do something, anything, to begin the change. That's why I love programming. It's the only thing right now that I consistently show up for on my own accord. Not because I need to do it, but because I want to. I've still got a lot longer to go, and honestly I don't think I'll ever reach the end of the road. However, everyday that I show up to program, workout, study, and grow is a day that I change into the person I want to become.
+
+I still need to handle my bad habits and thoughts, but if I stick to doing the right things I'll eventually change and get rid of them. That's what keep me moving. And upon completion of this project I realize maybe it's time to handle life like I do with programming. One small step at a time.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
