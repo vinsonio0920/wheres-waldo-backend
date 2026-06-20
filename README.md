@@ -39,10 +39,10 @@ This is the backend and the core of the Where's Waldo app. It gives the frontend
       <a href="#usage">Usage</a>
       <ul>
         <li>
-          <a href="reading-missions,-targets,-and-leaderboard-entries">Reading missions, targets, and leaderboard entries</a>
+          <a href="reading-missions-targets-and-leaderboard-entries">Reading missions, targets, and leaderboard entries</a>
         </li>
         <li>
-          <a href="creating-missions,-targets,-and-leaderboard-entries">Creating missions, targets, and leaderboard entries</a>
+          <a href="creating-missions-targets-and-leaderboard-entries">Creating missions, targets, and leaderboard entries</a>
         </li>
       </ul>
     </li>
